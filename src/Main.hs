@@ -2,13 +2,14 @@ module Main where
 
 import Control.Monad
 import Control.Monad.Reader
+import System.Random
 
 type Cell = ((Int, Int), Bool)
 
 type Board = [Cell]
 
-initBoard :: Board
-initBoard = [((x, y), True) | x <- [0..20], y <- [0..20]]
+initBoard :: [Bool] -> Board
+initBoard states = zip [(x, y) | x <- [0..20], y <- [0..20]] states
 
 nbrs :: Cell -> Reader Board [Cell]
 nbrs ((x', y'), alive') = do
@@ -51,4 +52,7 @@ gameLoop board iterations
 
 
 main :: IO ()
-main = gameLoop initBoard 10
+main = 
+	do
+		gen <- getStdGen
+		gameLoop (initBoard (take 500 (randoms gen :: [Bool]))) 10
