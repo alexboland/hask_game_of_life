@@ -8,7 +8,7 @@ type Cell = ((Int, Int), Bool)
 type Board = [Cell]
 
 initBoard :: Board
-initBoard = [((x, y), False) | x <- [0..20], y <- [0..20]]
+initBoard = [((x, y), True) | x <- [0..20], y <- [0..20]]
 
 nbrs :: Cell -> Reader Board [Cell]
 nbrs ((x', y'), alive') = do
@@ -35,11 +35,18 @@ iterateBoard :: Board -> Board
 iterateBoard board = [(runReader (iterateCell ((x, y), alive)) board) | ((x, y), alive) <- board]
 
 showBoard :: Board -> String
-showBoard board = foldl (++) "" (map (\((x, y), alive) -> "(" ++ (show x) ++ "," ++ (show y) ++ "): " ++ (show alive) ++ " | " ) board)
+showBoard board = foldl (++) "" (map (\cell -> (printCell cell)) board)
+
+printCell :: Cell -> String
+printCell ((x, y), alive)
+	| y == 0 && alive = "\n" ++ " # "
+	| y == 0 = "\n" ++ " . "
+	| alive = " # "
+	| otherwise = " . "
 
 gameLoop :: Board -> Int -> IO ()
 gameLoop board iterations
-	| iterations > 0 = (print (showBoard board)) >>= ( \y -> (putStrLn "") >>= (\x -> (gameLoop (iterateBoard board) (iterations - 1) ) ))
+	| iterations > 0 = (putStr (showBoard board)) >>= ( \y -> (putStrLn "") >>= (\x -> (gameLoop (iterateBoard board) (iterations - 1) ) ))
 	| otherwise = putStrLn "all done!"
 
 
