@@ -25,7 +25,7 @@ iterateCell :: Cell -> Reader Board Cell
 iterateCell ((x, y), alive) =
 	do
 		lNbrs <- liveNbrs ((x, y), alive)
-		if alive && lNbrs > 2 && lNbrs < 4
+		if alive && lNbrs >= 2 && lNbrs <= 3
 			then return ((x, y), True)
 		else	
 			if alive == False && lNbrs == 3
